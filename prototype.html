@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no">
+    <title>Bontoc Credit cooperative</title>
+    <style>
+        /* =========================
+           GENERAL
+        ========================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #e9edf2;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #EAF4FF;
+        }
+
+        /* =========================
+           PHONE FRAME
+        ========================= */
+        .phone {
+            width: 390px;
+            height: 844px;
+            background: #F5F9FF;
+            border: 8px solid #151515;
+            border-radius: 42px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+            background: #3987CC;
+        }
+
+        .status-bar {
+            height: 28px;
+            background: #3987CC;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 11px;
+        }
+
+        /* =========================
+           SCREENS
+        ========================= */
+        .screen {
+            display: none;
+            height: calc(100% - 28px);
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* =========================
+           LOGIN
+        ========================= */
+        #loginScreen {
+            background: linear-gradient(
+                145deg,
+                #6BB6F0,
+                #B8DEFF
+            );
+            color: #123B5D;
+            padding: 35px 25px;
+        }
+
+        .logo {
+            width: 85px;
+            height: 85px;
+            background: white;
+            color: #3987CC;
+            border-radius: 50%;
+            margin: 35px auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            font-size: 14px;
+            opacity: .85;
+            margin-bottom: 35px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .input-group > input {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 60px 14px 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .forgot {
+            text-align: right;
+            font-size: 13px;
+            margin: -5px 0 20px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #3987CC;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .primary-btn:active {
+            transform: scale(.98);
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+        .app-header {
+            background: linear-gradient(
+                135deg,
+                #64A9E8,
+                #91C9F5
+            );
+            color: white;
+            padding: 20px;
+            border-radius: 0 0 22px 22px;
+        }
+
+        .app-header h2 {
+            font-size: 22px;
+        }
+
+        .app-header p {
+            font-size: 13px;
+            margin-top: 5px;
+            opacity: .85;
+        }
+
+        /* =========================
+           HOME
+        ========================= */
+        .carousel {
+            margin: 18px;
+            height: 190px;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            background: #ddd;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(
+                transparent,
+                rgba(0, 0, 0, .75)
+            );
+            color: white;
+        }
+
+        .slide-caption h3 {
+            font-size: 17px;
+        }
+
+        .slide-caption p {
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* Carousel dots */
+        .dots {
+            text-align: center;
+            margin-top: -8px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin: 4px;
+            border-radius: 50%;
+            background: #bbb;
+        }
+
+        .dot.active {
+            background: #0d5c63;
+        }
+
+        /* =========================
+           CONTENT CARDS
+        ========================= */
+        .section-title {
+            margin: 20px 18px 10px;
+            color: #123b3f;
+        }
+
+        .content-card {
+            background: white;
+            margin: 10px 18px;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, .07);
+        }
+
+        .content-card img {
+            width: 100%;
+            height: 125px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .content-card h3 {
+            color: #0d5c63;
+            font-size: 17px;
+            margin-bottom: 6px;
+        }
+
+        .content-card p {
+            color: #666;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+        /* =========================
+           BALANCES
+        ========================= */
+        .balance-card {
+            background: white;
+            margin: 15px 18px;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow:
+                0 4px 14px rgba(0, 0, 0, .07);
+            cursor: pointer;
+        }
+
+        .balance-card:active {
+            transform: scale(.98);
+        }
+
+        .balance-card h3 {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .balance {
+            color: #3987CC;
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .tap-history {
+            color: #999;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* =========================
+           SETTINGS
+        ========================= */
+        .settings-section {
+            background: white;
+            margin: 15px 18px;
+            padding: 18px;
+            border-radius: 18px;
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, .06);
+        }
+
+        .settings-section h3 {
+            color: #0d5c63;
+            margin-bottom: 15px;
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 65px;
+        }
+
+        .password-container .toggle {
+            position: absolute;
+            right: 10px;
+            top: 11px;
+            font-size: 12px;
+            color: #3987CC;
+            cursor: pointer;
+        }
+
+        .requirements {
+            background: #EAF4FF;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .requirements p {
+            margin: 4px 0;
+        }
+
+        .valid {
+            color: green;
+        }
+
+        .dot.active {
+           background: #3987CC;
+        }
+
+        /* =========================
+           TOGGLE SWITCH
+        ========================= */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        .switch input:checked + .slider {
+            background: #3987CC;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* =========================
+           BOTTOM NAVIGATION
+        ========================= */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #FFFFFF;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            color: #3987CC;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item .icon {
+            display: block;
+            font-size: 23px;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: #0d5c63;
+            font-weight: bold;
+        }
+
+        .nav-item.logout-item {
+            color: #c0392b;
+        }
+
+        /* =========================
+           MODALS
+        ========================= */
+        .modal {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .modal-box h3 {
+            color: #0d5c63;
+            margin-bottom: 10px;
+        }
+
+        .modal-box p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #eee;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .logout-btn {
+            background: #c0392b;
+            color: white;
+        }
+
+        /* =========================
+           HISTORY
+        ========================= */
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-name {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .history-date {
+            color: #999;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .credit {
+            color: #16803a;
+        }
+
+        .debit {
+            color: #c0392b;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+        @media(max-height: 700px) {
+            .phone {
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- =========================
+         STATUS BAR
+    ========================= -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>● ● ▰</span>
+    </div>
+
+    <!-- =========================
+         LOGIN SCREEN
+    ========================= -->
+    <section id="loginScreen" class="screen active">
+        <div class="logo">
+            BCC
+        </div>
+
+        <h1 class="login-title">
+            Bontoc Credit Cooperative
+        </h1>
+        <p class="login-subtitle">
+            Your, Cooperative, your Partner, Your Future
+        </p>
+
+        <div class="input-group">
+            <label>
+                Username
+            </label>
+            <input
+                id="loginUsername"
+                type="text"
+                placeholder="Enter username"
+            >
+        </div>
+
+        <div class="input-group">
+            <label>
+                Password
+            </label>
+            <div class="input-wrapper">
+                <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="Enter password"
+                >
+                <span
+                    class="toggle-password"
+                    onclick="togglePassword(
+                        'loginPassword',
+                        this
+                    )"
+                >
+                    Show
+                </span>
+            </div>
+        </div>
+
+        <div
+            class="forgot"
+            onclick="openForgotPassword()"
+        >
+            Forgot password?
+        </div>
+        <button
+            class="primary-btn"
+            onclick="login()"
+        >
+            LOG IN
+        </button>
+    </section>
+
+    <!-- =========================
+         HOME SCREEN
+    ========================= -->
+    <section id="homeScreen" class="screen">
+        <header class="app-header">
+            <h2>
+                Good day, Member!
+            </h2>
+            <p>
+                Welcome to Bontoc Credit Cooperative.
+            </p>
+        </header>
+        <!-- IMAGE CAROUSEL -->
+        <div class="carousel">
+            <div class="slide active">
+                <img
+                    src="1.jpg"  alt="highlight 1"
+                >
+                <div class="slide-caption">
+                    <h3>
+                        Our Community
+                    </h3>
+                    <p>
+                        Building stronger communities together.
+                    </p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img
+                    src="2.jpg"  alt="Office"
+                >
+                <div class="slide-caption">
+                    <h3>
+                        Member Services
+                    </h3>
+                    <p>
+                        Services designed around our members.
+                    </p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img
+                    src="3.jpg"  alt="Team"
+                >
+                <div class="slide-caption">
+                    <h3>
+                        Working Together
+                    </h3>
+                    <p>
+                        Helping members achieve their goals.
+                    </p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img
+                    src="4.jpg"  alt="Meeting"
+                >
+                <div class="slide-caption">
+                    <h3>
+                        Member Growth
+                    </h3>
+                    <p>
+                        Supporting financial growth and stability.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+
+        <!-- Vision -->
+        <h3 class="section-title">
+            VISION
+        </h3>
+        <div class="content-card">
+            <img
+                src="vision1.webp"
+                alt="VISION"
+            >
+            <p>
+                A resilience and sustainable cooperative
+                of empowered members that fosters
+                innovation
+            </p>
+        </div>
+
+        <!-- Mission -->
+        <h3 class="section-title">
+            MISSION
+        </h3>
+        <div class="content-card">
+            <img
+                src="mission.webp"
+                alt="mission"
+            >
+            <p>
+                To provide accessible and affordable financial
+                services to members, foster economic growth,
+                promote financial literacy, and ensure long-term
+                sustainability through mutual cooperation
+                and support.
+            </p>
+        </div>
+    </section>
+    <!-- =========================
+         BALANCES SCREEN
+    ========================= -->
+    <section id="balanceScreen" class="screen">
+        <header class="app-header">
+            <h2>
+                My Balances
+            </h2>
+            <p>
+                Tap an account to view transaction history.
+            </p>
+        </header>
+
+        <div
+            class="balance-card"
+            onclick="showHistory('Savings Account')"
+        >
+            <h3>
+                Savings Account
+            </h3>
+            <div class="balance">
+                ₱25,450.75
+            </div>
+            <div class="tap-history">
+                Tap to view history →
+            </div>
+        </div>
+
+        <div
+            class="balance-card"
+            onclick="showHistory('MAP Balance')"
+        >
+            <h3>
+                MAP Balance
+            </h3>
+            <div class="balance">
+                ₱8,250.00
+            </div>
+            <div class="tap-history">
+                Tap to view history →
+            </div>
+        </div>
+
+        <div
+            class="balance-card"
+            onclick="showHistory('Share Capital')"
+        >
+            <h3>
+                Share Capital Balance
+            </h3>
+            <div class="balance">
+                ₱15,000.00
+            </div>
+            <div class="tap-history">
+                Tap to view history →
+            </div>
+        </div>
+    </section>
+    <!-- =========================
+         SETTINGS SCREEN
+    ========================= -->
+    <section id="settingsScreen" class="screen">
+        <header class="app-header">
+            <h2>
+                Settings
+            </h2>
+            <p>
+                Manage your account and security.
+            </p>
+        </header>
+        <!-- UPDATE PROFILE -->
+
+        <div class="settings-section">
+            <h3>
+                Update Profile
+            </h3>
+            <div class="password-container">
+                <input
+                    class="settings-input"
+                    id="currentPassword"
+                    type="password"
+                    placeholder="Current password"
+                >
+                <span
+                    class="toggle"
+                    onclick="togglePassword(
+                        'currentPassword',
+                        this
+                    )"
+                >
+                    Show
+                </span>
+            </div>
+
+            <div class="password-container">
+                <input
+                    class="settings-input"
+                    id="newPassword"
+                    type="password"
+                    placeholder="New password"
+                    oninput="checkPassword()"
+                >
+                <span
+                    class="toggle"
+                    onclick="togglePassword(
+                        'newPassword',
+                        this
+                    )"
+                >
+                    Show
+                </span>
+            </div>
+
+            <div class="requirements">
+                <p id="lengthReq">
+                    ● Minimum 8 characters
+                </p>
+                <p id="upperReq">
+                    ● At least one uppercase letter
+                </p>
+                <p id="lowerReq">
+                    ● At least one lowercase letter
+                </p>
+                <p id="numberReq">
+                    ● At least one number
+                </p>
+                <p id="specialReq">
+                    ● At least one special character
+                </p>
+            </div>
+
+            <div class="password-container">
+                <input
+                    class="settings-input"
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm new password"
+                >
+                <span
+                    class="toggle"
+                    onclick="togglePassword(
+                        'confirmPassword',
+                        this
+                    )"
+                >
+                    Show
+                </span>
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+                onclick="confirmUpdateProfile()">
+                UPDATE PROFILE
+            </button>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="settings-section">
+            <h3>
+                Notification
+            </h3>
+
+            <div class="setting-row">
+                <span>
+                    Notifications
+                </span>
+                <label class="switch">
+                    <input
+                        type="checkbox"
+                        id="notifications"
+                        checked
+                    >
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================= -->
+    <nav
+        id="bottomNav"
+        class="bottom-nav"
+        style="display: none;"
+    >
+        <div
+            class="nav-item active"
+            onclick="showScreen('homeScreen', this)"
+        >
+            <span class="icon">
+                ⌂
+            </span>
+            Home
+        </div>
+
+        <div
+            class="nav-item"
+            onclick="showScreen('balanceScreen', this)"
+        >
+            <span class="icon">
+                ₱
+            </span>
+            Balances
+        </div>
+
+        <div
+            class="nav-item"
+            onclick="showScreen('settingsScreen', this)"
+        >
+            <span class="icon">
+                ⚙
+            </span>
+            Settings
+        </div>
+
+        <!-- LOGOUT -->
+        <div
+            class="nav-item logout-item"
+            onclick="confirmLogout()"
+        >
+            <span class="icon">
+                ↪
+            </span>
+            Logout
+        </div>
+    </nav>
+
+    <!-- =========================
+         FORGOT PASSWORD MODAL
+    ========================= -->
+    <div
+        id="forgotModal"
+        class="modal"
+    >
+        <div class="modal-box">
+            <h3>
+                Forgot Password?
+            </h3>
+            <p>
+                Kindly contact the Office, So that they will
+                Manually reset your Password
+            </p>
+            <button
+                class="secondary-btn"
+                onclick="closeModal('forgotModal')"
+            >
+                CANCEL
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================
+         HISTORY MODAL
+    ========================= -->
+    <div
+        id="historyModal"
+        class="modal"
+    >
+        <div class="modal-box">
+            <h3 id="historyTitle">
+                Account History
+            </h3>
+            <div id="historyContent"></div>
+            <button
+                class="secondary-btn"
+                onclick="closeModal('historyModal')"
+            >
+                CLOSE
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================
+         LOGOUT CONFIRMATION MODAL
+    ========================= -->
+    <div
+        id="logoutModal"
+        class="modal"
+    >
+        <div class="modal-box">
+            <h3>
+                Confirm Logout
+            </h3>
+            <p>
+                Are you sure you want to log out
+                of your account?
+            </p>
+            <button
+                class="primary-btn logout-btn"
+                onclick="logout()"
+            >
+                YES, LOG OUT
+            </button>
+            <button
+                class="secondary-btn"
+                onclick="closeModal('logoutModal')"
+            >
+                CANCEL
+            </button>
+        </div>
+    </div>
+
+    <!-- UPDATE PROFILE CONFIRMATION MODAL -->
+    <div id="updateProfileModal" class="modal">
+        <div class="modal-box">
+            <h3>Confirm Profile Update</h3>
+
+            <p>
+                Are you sure you want to update your profile?
+                Please review your information before proceeding.
+            </p>
+
+            <button
+                type="button"
+                class="primary-btn"
+                onclick="proceedProfileUpdate()">
+                YES, UPDATE
+            </button>
+
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="cancelProfileUpdate()">
+                NO, CANCEL
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =========================
+   LOGIN
+========================= */
+function login() {
+    const username =
+        document
+            .getElementById("loginUsername")
+            .value
+            .trim();
+    const password =
+        document
+            .getElementById("loginPassword")
+            .value;
+    if (!username || !password) {
+        alert(
+            "Please enter your username and password."
+        );
+        return;
+    }
+
+    document
+        .getElementById("loginScreen")
+        .classList.remove("active");
+
+    document
+        .getElementById("homeScreen")
+        .classList.add("active");
+
+    document
+        .getElementById("bottomNav")
+        .style.display = "flex";
+
+    // Make Home active
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    document
+        .querySelector(".nav-item")
+        .classList.add("active");
+}
+
+/* =========================
+   PASSWORD SHOW / HIDE
+========================= */
+function togglePassword(id, element) {
+    const input =
+        document.getElementById(id);
+    if (input.type === "password") {
+        input.type = "text";
+        element.textContent = "Hide";
+    } else {
+        input.type = "password";
+        element.textContent = "Show";
+    }
+}
+
+/* =========================
+   SCREEN NAVIGATION
+========================= */
+function showScreen(screenId, navElement) {
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
+        });
+
+    document
+        .getElementById(screenId)
+        .classList.add("active");
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    navElement.classList.add("active");
+}
+
+/* =========================
+   FORGOT PASSWORD
+========================= */
+function openForgotPassword() {
+    document
+        .getElementById("forgotModal")
+        .classList.add("show");
+}
+
+function sendOTP() {
+    const destination =
+        document
+            .getElementById("otpDestination")
+            .value
+            .trim();
+    if (!destination) {
+        alert(
+            "Please enter your mobile number or email."
+        );
+        return;
+    }
+
+    closeModal("forgotModal");
+    document
+        .getElementById("otpModal")
+        .classList.add("show");
+}
+
+function verifyOTP() {
+    const otp =
+        document
+            .getElementById("otpInput")
+            .value
+            .trim();
+    if (!/^\d{6}$/.test(otp)) {
+        alert(
+            "Please enter a valid 6-digit OTP."
+        );
+        return;
+    }
+
+    alert(
+        "OTP verified successfully. " +
+        "This is a demo application."
+    );
+
+    document
+        .getElementById("otpInput")
+        .value = "";
+    closeModal("otpModal");
+}
+
+/* =========================
+   MODALS
+========================= */
+function closeModal(id) {
+    const modal =
+        document.getElementById(id);
+    if (modal) {
+        modal.classList.remove("show");
+    }
+}
+
+/* =========================
+   CAROUSEL
+========================= */
+
+let currentSlide = 0;
+const slides =
+    document.querySelectorAll(".slide");
+const dots =
+    document.querySelectorAll(".dot");
+function showSlide(index) {
+    slides.forEach(slide => {
+        slide.classList.remove("active");
+    });
+
+    dots.forEach(dot => {
+        dot.classList.remove("active");
+    });
+
+    slides[index].classList.add("active");
+    dots[index].classList.add("active");
+}
+
+setInterval(() => {
+    currentSlide++;
+    if (currentSlide >= slides.length) {
+        currentSlide = 0;
+    }
+    showSlide(currentSlide);
+}, 4000);
+
+/* =========================
+   ACCOUNT HISTORY
+========================= */
+function showHistory(account) {
+    const title =
+        document.getElementById("historyTitle");
+    const content =
+        document.getElementById("historyContent");
+    title.textContent =
+        account + " History";
+    let transactions = [];
+    if (account === "Savings Account") {
+        transactions = [
+            {
+                name: "Deposit",
+                date: "Sept. 20, 2026",
+                amount: "+ ₱5,000.00",
+                type: "credit"
+            },
+            {
+                name: "ATM Withdrawal",
+                date: "Sept. 18, 2026",
+                amount: "- ₱1,500.00",
+                type: "debit"
+            },
+            {
+                name: "Deposit",
+                date: "Sept. 10, 2026",
+                amount: "+ ₱3,000.00",
+                type: "credit"
+            }
+        ];
+    }
+    else if (account === "MAP Balance") {
+        transactions = [
+            {
+                name: "Monthly Contribution",
+                date: "Sept. 15, 2026",
+                amount: "+ ₱1,000.00",
+                type: "credit"
+            },
+            {
+                name: "MAP Payment",
+                date: "Sept. 05, 2026",
+                amount: "- ₱500.00",
+                type: "debit"
+            }
+        ];
+    }
+    else {
+        transactions = [
+            {
+                name: "Share Capital Contribution",
+                date: "Sept. 01, 2026",
+                amount: "+ ₱2,000.00",
+                type: "credit"
+            },
+            {
+                name: "Share Capital Contribution",
+                date: "Aug. 01, 2026",
+                amount: "+ ₱2,000.00",
+                type: "credit"
+            }
+        ];
+    }
+
+    content.innerHTML = "";
+    transactions.forEach(transaction => {
+        content.innerHTML += `
+            <div class="history-item">
+                <div>
+                    <div class="history-name">
+                        ${transaction.name}
+                    </div>
+                    <div class="history-date">
+                        ${transaction.date}
+                    </div>
+                </div>
+                <strong class="${transaction.type}">
+                    ${transaction.amount}
+                </strong>
+            </div>
+        `;
+    });
+
+    document
+        .getElementById("historyModal")
+        .classList.add("show");
+}
+
+/* =========================
+   PASSWORD VALIDATION
+========================= */
+function checkPassword() {
+    const password =
+        document
+            .getElementById("newPassword")
+            .value;
+    const length =
+        password.length >= 8;
+    const upper =
+        /[A-Z]/.test(password);
+    const lower =
+        /[a-z]/.test(password);
+    const number =
+        /[0-9]/.test(password);
+    const special =
+        /[^A-Za-z0-9]/.test(password);
+    updateRequirement(
+        "lengthReq",
+        length
+    );
+
+    updateRequirement(
+        "upperReq",
+        upper
+    );
+    updateRequirement(
+        "lowerReq",
+        lower
+    );
+    updateRequirement(
+        "numberReq",
+        number
+    );
+    updateRequirement(
+        "specialReq",
+        special
+    );
+}
+
+function updateRequirement(id, valid) {
+    const element =
+        document.getElementById(id);
+    if (valid) {
+        element.classList.add("valid");
+    } else {
+        element.classList.remove("valid");
+    }
+}
+
+/* =========================
+   UPDATE PROFILE CONFIRMATION
+========================= */
+
+function confirmUpdateProfile() {
+    document
+        .getElementById("updateProfileModal")
+        .classList.add("show");
+}
+
+function cancelProfileUpdate() {
+    // NO: close the confirmation and cancel.
+    closeModal("updateProfileModal");
+}
+
+function proceedProfileUpdate() {
+    // YES: close confirmation and perform validation.
+    closeModal("updateProfileModal");
+    updateProfile();
+}
+
+/* =========================
+   UPDATE PROFILE
+========================= */
+
+function updateProfile() {
+    const currentPassword =
+        document.getElementById("currentPassword").value;
+
+    const newPassword =
+        document.getElementById("newPassword").value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+    if (
+        !currentPassword ||
+        !newPassword ||
+        !confirmPassword
+    ) {
+        alert("Please complete all password fields.");
+        return;
+    }
+
+    const validPassword =
+        newPassword.length >= 8 &&
+        /[A-Z]/.test(newPassword) &&
+        /[a-z]/.test(newPassword) &&
+        /[0-9]/.test(newPassword) &&
+        /[^A-Za-z0-9]/.test(newPassword);
+
+    if (!validPassword) {
+        alert(
+            "Password must contain at least 8 characters, " +
+            "one uppercase letter, one lowercase letter, " +
+            "one number, and one special character."
+        );
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert(
+            "New password and confirmation password do not match."
+        );
+        return;
+    }
+
+    /*
+       DEMO ONLY:
+       No actual password is changed or saved here.
+       A real application must verify the current password
+       and update the password securely on its server.
+    */
+
+    alert(
+        "Profile update validated successfully. " +
+        "Connect the application to its secure backend " +
+        "to save the changes."
+    );
+
+    // Clear password fields after validation.
+    document.getElementById("currentPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+    checkPassword();
+}
+/* =========================
+   LOGOUT CONFIRMATION
+========================= */
+function confirmLogout() {
+    document
+        .getElementById("logoutModal")
+        .classList.add("show");
+}
+
+/* =========================
+   LOGOUT
+========================= */
+function logout() {
+    // Close logout confirmation
+    closeModal("logoutModal");
+    // Close any other open modal
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+            modal.classList.remove("show");
+        });
+
+    // Hide all screens
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
+        });
+
+    // Show login screen
+    document
+        .getElementById("loginScreen")
+        .classList.add("active");
+    // Hide bottom navigation
+    document
+        .getElementById("bottomNav")
+        .style.display = "none";
+    // Clear login fields
+    document
+        .getElementById("loginUsername")
+        .value = "";
+    document
+        .getElementById("loginPassword")
+        .value = "";
+    // Return password field to hidden state
+    document
+        .getElementById("loginPassword")
+        .type = "password";
+    // Reset Show/Hide text
+    const loginToggle =
+        document.querySelector(
+            "#loginScreen .toggle-password"
+        );
+
+    if (loginToggle) {
+        loginToggle.textContent = "Show";
+    }
+
+    // Reset navigation
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    // Make Home the default selected navigation item
+    const firstNavItem =
+        document.querySelector(".nav-item");
+    if (firstNavItem) {
+        firstNavItem.classList.add("active");
+    }
+}
+
+/* =========================
+   AUTOMATIC DATA BACKUP
+   Every 24 hours
+========================= */
+
+const BACKUP_INTERVAL = 24 * 60 * 60 * 1000;
+const BACKUP_KEY = "bcc_last_backup";
+const APP_DATA_KEY = "bccAppData";
+
+function createApplicationBackup() {
+    try {
+        const now = Date.now();
+        const lastBackup = Number(
+            localStorage.getItem(BACKUP_KEY) || 0
+        );
+
+        // Create a backup only when 24 hours have passed.
+        if (now - lastBackup < BACKUP_INTERVAL) {
+            return;
+        }
+
+        // Back up the application's saved data.
+        // Do not include passwords or authentication secrets.
+        const applicationData = {
+            application: "Bontoc Credit Cooperative",
+            backupDate: new Date(now).toISOString(),
+            version: "1.0",
+            data: localStorage.getItem(APP_DATA_KEY),
+            notificationsEnabled:
+                document.getElementById("notifications")?.checked ?? true
+        };
+
+        // Save a timestamped backup in browser storage.
+        const backupHistory = JSON.parse(
+            localStorage.getItem("bcc_backup_history") || "[]"
+        );
+
+        backupHistory.push(applicationData);
+
+        localStorage.setItem(
+            "bcc_backup_history",
+            JSON.stringify(backupHistory)
+        );
+
+        localStorage.setItem(
+            BACKUP_KEY,
+            String(now)
+        );
+
+        console.log(
+            "Application data backup saved:",
+            applicationData.backupDate
+        );
+
+    } catch (error) {
+        console.error("Backup failed:", error);
+    }
+}
+
+// Check immediately when the application loads.
+createApplicationBackup();
+
+// Check every minute while the application is open.
+setInterval(createApplicationBackup, 60 * 1000);
+
+</script>
+</body>
+</html>

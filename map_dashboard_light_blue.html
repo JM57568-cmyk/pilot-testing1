@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MAP View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-sky-50 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-sky-800 text-white flex flex-col shadow-xl">
+            <div class="p-5 text-2xl font-bold tracking-wider border-b border-sky-700 flex items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-sky-200"></i>
+                <span>AdminPortal</span>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" onclick="switchView('map')" id="nav-map" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-sky-700 text-white font-medium transition-all shadow-inner">
+                    <i class="fa-solid fa-map-location-dot w-5"></i>
+                    <span>MAP</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-sky-700 text-xs text-sky-200 text-center">
+                &copy; 2026 System v1.0
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm h-16 flex items-center justify-between px-8 z-10 border-b border-sky-100">
+                <h1 id="page-title" class="text-xl font-bold text-sky-950 uppercase">MAP / Records Dashboard</h1>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-slate-600 font-medium">Administrator</span>
+                    <div class="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold">A</div>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container -->
+            <div class="flex-1 overflow-y-auto p-8" id="main-content">
+                <div id="map-view" class="space-y-6">
+
+                    <!-- Search and Sort Controls -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-sky-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-96">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search by ID or Full Name..."
+                                class="w-full pl-10 pr-4 py-2 border border-sky-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 text-sm">
+                        </div>
+
+                        <div class="w-full md:w-auto flex items-center gap-2">
+                            <label for="sortSelect" class="text-sm font-medium text-slate-600 whitespace-nowrap">View / Sort By:</label>
+                            <select id="sortSelect" onchange="sortData()" class="border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+                                <option value="name-asc">Full Name (A to Z)</option>
+                                <option value="name-desc">Full Name (Z to A)</option>
+                                <option value="balance-high">Highest Current Balance</option>
+                                <option value="balance-low">Lowest Current Balance</option>
+                                <option value="archived">Archived (Deceased Members)</option>
+                            </select>
+                        </div>
+                        <!-- Backup Button -->
+                        <button
+                            onclick="downloadBackup()"
+                            class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-sm transition duration-200">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Backup Data</span>
+                        </button>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-sky-100">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-sky-100 text-sky-950 uppercase text-xs tracking-wider border-b border-sky-200">
+                                    <tr>
+                                        <th class="py-4 px-6">ID Number</th>
+                                        <th class="py-4 px-6">Full Name</th>
+                                        <th class="py-4 px-6">Sex</th>
+                                        <th class="py-4 px-6">Date Entered</th>
+                                        <th class="py-4 px-6">Current Balance</th>
+                                        <th class="py-4 px-6 text-center">Deceased Checkbox</th>
+                                        <th class="py-4 px-6 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody" class="divide-y divide-sky-100 text-sm text-slate-700">
+                                    <!-- Populated dynamically via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div id="actionModal" class="fixed inset-0 bg-slate-950 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-[480px] shadow-2xl space-y-4">
+            <h3 id="modalTitle" class="text-lg font-bold text-sky-950 border-b border-sky-100 pb-2">Transaction Details</h3>
+            <div id="modalContent" class="text-sm text-slate-600">Transaction details go here...</div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeModal()" class="px-4 py-2 bg-sky-100 hover:bg-sky-200 rounded-lg text-sm font-medium text-sky-900 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backup key
+        const BACKUP_KEY = "MAP_Backup_Data";
+
+        function saveBackup() {
+            localStorage.setItem(BACKUP_KEY, JSON.stringify(dataset));
+            console.log("Backup saved.");
+        }
+
+        function loadBackup() {
+        const backup = localStorage.getItem(BACKUP_KEY);
+
+            if (backup) {
+                dataset = JSON.parse(backup);
+                console.log("Backup restored.");
+            }
+        }
+
+        function downloadBackup() {
+            const backupData = JSON.stringify(dataset, null, 2);
+
+            const blob = new Blob([backupData], {
+                type: "application/json"
+        });
+
+        const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "MAP_Backup.json";
+            link.click();
+        }
+let dataset = [];
+
+for (let i = 1; i <= 1000; i++) {
+    dataset.push({
+        id: `ID-${1000 + i}`,
+        name: `Member ${i}`,
+        sex: i % 2 === 0 ? "Male" : "Female",
+        dateEntered: "2026-01-01",
+        isDeceased: false,
+        balance: Math.floor(Math.random() * 100000) + 1000,
+        transactions: []
+    });
+}
+
+if (!localStorage.getItem(BACKUP_KEY)) {
+    saveBackup();
+}
+        window.onload = function() {
+            loadBackup(); // Restore latest backup
+            sortData();
+        };
+
+        function renderTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-sky-500">No records found</td></tr>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = `transition-colors ${item.isDeceased ? 'bg-rose-50 text-slate-400' : 'hover:bg-sky-50 text-slate-700'}`;
+                row.innerHTML = `
+                    <td class="py-4 px-6 font-medium ${item.isDeceased ? 'line-through text-rose-500' : 'text-sky-950'}">${item.id}</td>
+                    <td class="py-4 px-6 ${item.isDeceased ? 'line-through' : ''}">${item.name}</td>
+                    <td class="py-4 px-6">${item.sex}</td>
+                    <td class="py-4 px-6">${item.dateEntered}</td>
+                    <td class="py-4 px-6 font-semibold ${item.isDeceased ? 'text-slate-500' : 'text-sky-700'}">₱${item.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    <td class="py-4 px-6 text-center">
+                        <input type="checkbox" ${item.isDeceased ? 'checked' : ''} onchange="handleDeceasedCheckbox('${item.id}', this)" class="w-4 h-4 accent-sky-600 border-sky-300 rounded cursor-pointer">
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <button onclick="triggerAction('Transaction Details', '${item.id}')" title="Transaction Details" class="inline-flex items-center gap-2 px-3 py-2 bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg transition text-sm">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Transaction Details</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        if (!localStorage.getItem(BACKUP_KEY)) {
+            saveBackup();
+        }
+
+        // Handle deceased-member checkbox and record MAP-related contributions.
+        function handleDeceasedCheckbox(id, checkbox) {
+
+    const deceasedMember = dataset.find(d => d.id === id);
+
+    if (checkbox.checked) {
+
+        let deathDateStr = prompt(
+            `Enter Date of Death for ${deceasedMember.name} (YYYY-MM-DD):`,
+            new Date().toISOString().split('T')[0]
+        );
+
+        if (!deathDateStr) {
+            checkbox.checked = false;
+            return;
+        }
+
+        const dateEntered = new Date(deceasedMember.dateEntered);
+        const dateOfDeath = new Date(deathDateStr);
+
+        if (
+            Number.isNaN(dateOfDeath.getTime()) ||
+            dateOfDeath < dateEntered
+        ) {
+            alert(
+                "Please enter a valid date of death on or after the member's entry date."
+            );
+
+            checkbox.checked = false;
+            return;
+        }
+
+        const diffDays =
+            (dateOfDeath - dateEntered) /
+            (1000 * 60 * 60 * 24);
+
+        const diffMonths = diffDays / 30.44;
+
+        let payoutPercentage = 0.25;
+
+        if (diffMonths > 2 && diffMonths <= 3) {
+            payoutPercentage = 0.50;
+        } else if (diffMonths > 3 && diffMonths < 4) {
+            payoutPercentage = 0.75;
+        } else if (diffMonths >= 4) {
+            payoutPercentage = 1.00;
+        }
+
+        const totalPayout = 50000 * payoutPercentage;
+
+        const survivingMembers = dataset.filter(member =>
+            !member.isDeceased &&
+            member.id !== deceasedMember.id
+        );
+
+        if (survivingMembers.length === 0) {
+
+            alert(
+                "Error: There are no surviving members left to contribute to this mortuary aid."
+            );
+
+            checkbox.checked = false;
+            return;
+        }
+
+        const contributionPerMember =
+            totalPayout / survivingMembers.length;
+
+        deceasedMember.isDeceased = true;
+
+        deceasedMember.transactions.push({
+            id: deceasedMember.id,
+            deceased: `${deceasedMember.name} (MAP Claim Received)`,
+            deducted: -totalPayout
+        });
+
+        survivingMembers.forEach(member => {
+
+            member.balance -= contributionPerMember;
+
+            member.transactions.push({
+                id: member.id,
+                deceased: deceasedMember.name,
+                deducted: contributionPerMember
+            });
+
+        });
+
+        saveBackup();
+
+        sortData();
+
+        alert(
+            `Deceased status verified for ${deceasedMember.name}. Total payout: ₱${totalPayout.toLocaleString()}.`
+        );
+
+    } else {
+
+        deceasedMember.isDeceased = false;
+
+        saveBackup();
+
+        sortData();
+    }
+}
+
+        function filterData() {
+            sortData();
+        }
+
+        function sortData() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = dataset.filter(item =>
+                item.id.toLowerCase().includes(query) || item.name.toLowerCase().includes(query)
+            );
+
+            if (sortBy === 'archived') {
+                filtered = filtered.filter(item => item.isDeceased);
+            } else {
+                filtered = filtered.filter(item => !item.isDeceased);
+
+                if (sortBy === 'name-asc') {
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (sortBy === 'name-desc') {
+                    filtered.sort((a, b) => b.name.localeCompare(a.name));
+                } else if (sortBy === 'balance-high') {
+                    filtered.sort((a, b) => b.balance - a.balance);
+                } else if (sortBy === 'balance-low') {
+                    filtered.sort((a, b) => a.balance - b.balance);
+                }
+            }
+
+            renderTable(filtered);
+        }
+
+        function triggerAction(actionType, id) {
+            const item = dataset.find(d => d.id === id);
+            if (!item || actionType !== 'Transaction Details') return;
+
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+
+            title.innerText = `Transaction Details: ${item.name} (${item.id})`;
+
+            if (item.transactions.length === 0) {
+                content.innerHTML = `<p class="text-sky-600 italic py-4 text-center">No transaction records found for this account.</p>`;
+            } else {
+                let tableHTML = `
+                    <div class="max-h-60 overflow-y-auto border border-sky-100 rounded-lg">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-sky-100 text-sky-950 text-xs uppercase sticky top-0">
+                                <tr>
+                                    <th class="py-2.5 px-3">ID</th>
+                                    <th class="py-2.5 px-3">Name of the Deceased Person</th>
+                                    <th class="py-2.5 px-3 text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-sky-100 text-xs">
+                `;
+
+                item.transactions.forEach(tx => {
+                    const isClaim = tx.deducted < 0;
+                    const displayAmount = isClaim
+                        ? `+₱${Math.abs(tx.deducted).toLocaleString('en-US', {minimumFractionDigits: 2})}`
+                        : `-₱${tx.deducted.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+                    tableHTML += `
+                        <tr>
+                            <td class="py-2.5 px-3 font-medium text-sky-950">${tx.id}</td>
+                            <td class="py-2.5 px-3">${tx.deceased}</td>
+                            <td class="py-2.5 px-3 text-right font-semibold ${isClaim ? 'text-sky-700' : 'text-rose-600'}">${displayAmount}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                content.innerHTML = tableHTML;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('actionModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function switchView(viewName) {
+            if (viewName === 'map') {
+                document.getElementById('page-title').innerText = 'MAP / Records Dashboard';
+            }
+        }
+        function downloadBackup() {
+
+    const backupData = JSON.stringify(dataset, null, 2);
+
+    const blob = new Blob(
+        [backupData],
+        { type: "application/json" }
+    );
+
+    const link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "MAP_Backup.json";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(link.href);
+}
+    </script>
+</body>
+</html>
